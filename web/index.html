@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>文章查重 · PaperCheck</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">PC</div>
+        <div class="brand-text">
+          <h1>文章查重</h1>
+          <p>多文档相似度分析与重复内容定位</p>
+        </div>
+      </div>
+      <div class="topbar-meta">
+        <span class="dot" id="server-dot"></span>
+        <span id="server-status">正在连接服务…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- ============ 上传区 ============ -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>1. 添加待查文档</h2>
+        <p>支持 Word（.docx）、PDF、纯文本（.txt），一次可添加多篇，至少两篇才能比对。</p>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" multiple accept=".docx,.pdf,.txt,.md" hidden />
+        <div class="dropzone-icon">＋</div>
+        <p class="dropzone-title">点击选择文件，或把文件拖到这里</p>
+        <p class="dropzone-sub">单个文件建议不超过 50 MB；PDF 需含文本层（扫描件无法提取文字）</p>
+      </div>
+
+      <div class="file-list" id="file-list"></div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <label class="select-wrap">
+            <span>检测灵敏度</span>
+            <select id="sensitivity">
+              <option value="12">宽松（短句也算重复）</option>
+              <option value="20" selected>标准（推荐）</option>
+              <option value="32">严格（只认长段落）</option>
+            </select>
+          </label>
+        </div>
+        <div class="toolbar-right">
+          <button class="btn ghost" id="clear-btn" type="button">清空</button>
+          <button class="btn primary" id="analyze-btn" type="button" disabled>开始查重</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 示例语料 ============ -->
+    <section class="panel">
+      <div class="panel-head row">
+        <div>
+          <h2>示例语料</h2>
+          <p>来自 <code>samples/</code> 目录的测试文章，覆盖低、中、高三档重复率，可直接体验。</p>
+        </div>
+        <button class="btn ghost" id="refresh-samples" type="button">刷新</button>
+      </div>
+      <div class="sample-list" id="sample-list">
+        <p class="muted">正在读取示例语料…</p>
+      </div>
+      <div class="toolbar">
+        <span class="muted" id="sample-hint">勾选任意两篇及以上文档，使用示例查重。</span>
+        <button class="btn primary" id="sample-analyze-btn" type="button" disabled>使用示例查重</button>
+      </div>
+    </section>
+
+    <!-- ============ 结果区 ============ -->
+    <section class="panel hidden" id="result-panel">
+      <div class="panel-head row">
+        <div>
+          <h2>2. 查重结果</h2>
+          <p id="result-summary">—</p>
+        </div>
+        <div class="result-tools">
+          <button class="btn ghost" id="export-btn" type="button">导出 JSON 报告</button>
+          <span class="badge neutral" id="elapsed-badge">—</span>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+      <div class="alert hidden" id="failure-box"></div>
+
+      <h3 class="section-title">文档查重率</h3>
+      <div class="table-wrap">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>文档</th>
+              <th>类型</th>
+              <th class="num">内容字符</th>
+              <th class="num">重复字符</th>
+              <th>查重率</th>
+              <th>等级</th>
+              <th>最高相似文档</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="doc-tbody"></tbody>
+        </table>
+      </div>
+
+      <h3 class="section-title">相似文档对 <span class="muted" id="pair-count"></span></h3>
+      <div class="pair-list" id="pair-list"></div>
+    </section>
+
+    <!-- ============ 判定标准 ============ -->
+    <section class="panel">
+      <div class="panel-head">
+        <h2>查重率判定标准</h2>
+        <p>
+          国内没有全国统一的查重率硬性标准，各高校要求不同。综合公开资料，常见的参考区间为：
+          本科毕业论文一般在 20%~30% 以下，硕士学位论文 10%~20%，博士学位论文 5%~10%；
+          本工具按下列区间给出风险提示，仅供参考。
+        </p>
+      </div>
+      <div class="levels">
+        <div class="level-card lv0">
+          <span class="level-tag">安全</span>
+          <strong>&lt; 15%</strong>
+          <p>重复内容少，通常可直接通过常规查重。</p>
+        </div>
+        <div class="level-card lv1">
+          <span class="level-tag">警示</span>
+          <strong>15% ~ 25%</strong>
+          <p>接近多数院校的警戒线，建议修改重复段落。</p>
+        </div>
+        <div class="level-card lv2">
+          <span class="level-tag">危险</span>
+          <strong>25% ~ 40%</strong>
+          <p>明显偏高，需要大幅改写并规范引用。</p>
+        </div>
+        <div class="level-card lv3">
+          <span class="level-tag">高危</span>
+          <strong>≥ 40%</strong>
+          <p>存在学术不端风险，须重写重复部分。</p>
+        </div>
+      </div>
+      <p class="notice">
+        说明：查重率 = 与其他文档重复的内容字符数 ÷ 全文内容字符数。统计时先做规范化
+        （全角转半角、统一小写、忽略标点与空白），同一段内容被多篇文档重复只计一次。
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>算法：k-gram Shingling · Jaccard / 包含度 · SimHash · MinHash · 最长公共子串定位</p>
+    <p class="muted">纯 C++ 实现，不依赖任何第三方库；解析 DOCX（ZIP + XML）与 PDF（对象流 + 字体编码）均为自研。</p>
+  </footer>
+
+  <!-- 分析中的遮罩 -->
+  <div class="overlay hidden" id="overlay">
+    <div class="overlay-card">
+      <div class="spinner"></div>
+      <p class="overlay-title">正在比对文档…</p>
+      <p class="overlay-sub" id="overlay-sub">解析文件、提取正文、计算指纹</p>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

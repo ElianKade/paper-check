@@ -1,0 +1,16 @@
+# 统一按文本处理源码与文档，二进制文件不做换行转换
+* text=auto
+
+*.cpp text
+*.h text
+*.py text
+*.js text
+*.css text
+*.html text
+*.md text
+Makefile text
+
+*.png binary
+*.pdf binary
+*.docx binary
+*.exe binary

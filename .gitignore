@@ -1,0 +1,21 @@
+# ---- 编译产物 ----
+build/*.o
+build/*.exe
+*.o
+*.exe
+
+# ---- 测试 / 调试临时文件 ----
+build/*.txt
+build/*.json
+!build/.gitkeep
+build/pdftest/
+build/samples_html/
+tools/__pycache__/
+__pycache__/
+*.pyc
+
+# ---- 编辑器 / 系统文件 ----
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
