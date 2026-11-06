@@ -112,8 +112,6 @@
 │  ├─ http_server.h/.cpp    WinSock2 HTTP 服务（multipart、静态资源）
 │  └─ main.cpp              入口：Web 服务模式 / CLI 模式
 ├─ tools/
-│  ├─ extract_test.cpp      批量文本提取的调试工具
-│  ├─ analyze_test.cpp      批量查重并输出 JSON 的调试工具
 │  └─ gen_samples.py        生成 samples/ 测试语料（python-docx + Edge 打印 PDF）
 ├─ web/                     前端（结构 / 样式 / 脚本分离）
 │  ├─ index.html
@@ -122,6 +120,8 @@
 ├─ samples/                 8 篇测试文档（DOCX / PDF，覆盖低中高查重率）
 ├─ docs/                    界面截图
 ├─ Makefile                 mingw32-make 构建脚本
+├─ build.bat                Windows 一键编译并启动
+├─ LICENSE                  MIT 许可证
 ├─ build/                   构建产物（已 gitignore）
 └─ README.md
 ```
@@ -138,14 +138,26 @@
 
 ### 5.2 编译
 
+一键脚本（自动查找 `g++`、编译并启动服务）：
+
+```bat
+build.bat
+```
+
+或使用 make：
+
 ```bat
 mingw32-make
 ```
 
-或直接调用编译器：
+或直接调用编译器（Windows 下 g++ 不会自动展开通配符，需逐个列出源文件）：
 
 ```bat
-g++ -std=c++17 -O2 -Wall -Wextra -Isrc src\*.cpp -o build\pc_check.exe -lws2_32
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc ^
+    src\common.cpp src\inflate.cpp src\zip.cpp src\docx.cpp src\pdf.cpp ^
+    src\text.cpp src\fingerprint.cpp src\similarity.cpp src\analyzer.cpp ^
+    src\http_server.cpp src\main.cpp ^
+    -o build\pc_check.exe -lws2_32
 ```
 
 ### 5.3 启动 Web 服务
@@ -291,3 +303,7 @@ python tools\gen_samples.py
 | 版本 | 说明 |
 | --- | --- |
 | v0.1.0 | 首个完整版本：DOCX / PDF 解析、查重算法、Web 前后端、8 篇测试语料、README |
+
+## 十一、许可证
+
+本项目基于 [MIT License](LICENSE) 开源，可自由使用、修改与分发。
