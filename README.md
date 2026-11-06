@@ -6,6 +6,11 @@
 
 ![查重结果页面](docs/screenshot-result.png)
 
+## 快速开始
+
+- **下载即用**：到 [Releases](https://github.com/ElianKade/paper-check/releases/latest) 下载 `PaperCheck-v0.1.0-win64.zip`，解压后双击 `pc_check.exe`，浏览器访问 <http://127.0.0.1:8080>（无需安装任何运行库）。
+- **从源码编译**：安装 MinGW-w64（g++ 支持 C++17）后，在仓库根目录运行 `build.bat`，脚本会自动编译并启动服务。
+
 ---
 
 ## 一、功能特性
