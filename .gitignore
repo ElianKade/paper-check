@@ -7,9 +7,9 @@ build/*.exe
 # ---- 测试 / 调试临时文件 ----
 build/*.txt
 build/*.json
-!build/.gitkeep
 build/pdftest/
 build/samples_html/
+build/release/
 tools/__pycache__/
 __pycache__/
 *.pyc
