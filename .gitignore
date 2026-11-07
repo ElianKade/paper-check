@@ -1,17 +1,11 @@
-# ---- 编译产物 ----
-build/*.o
-build/*.exe
+# ---- 编译产物 / 本地构建目录 ----
+build/
 *.o
 *.exe
 
-# ---- 测试 / 调试临时文件 ----
-build/*.txt
-build/*.json
-build/pdftest/
-build/samples_html/
-build/release/
-tools/__pycache__/
+# ---- Python 缓存 ----
 __pycache__/
+tools/__pycache__/
 *.pyc
 
 # ---- 编辑器 / 系统文件 ----
