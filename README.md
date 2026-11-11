@@ -8,7 +8,7 @@
 
 ## 快速开始
 
-- **下载即用**：到 [Releases](https://github.com/ElianKade/paper-check/releases/latest) 下载 `PaperCheck-v0.1.0-win64.zip`，解压后双击 `pc_check.exe`，浏览器访问 <http://127.0.0.1:8080>（无需安装任何运行库）。
+- **下载即用**：到 [Releases](https://github.com/ElianKade/paper-check/releases/latest) 下载 `PaperCheck-v0.2.1-win64.zip`，解压后双击 `pc_check.exe`，浏览器访问 <http://127.0.0.1:8080>。压缩包内的 exe 已**静态链接** MinGW 运行库，目标机器无需安装 MinGW、也无需任何第三方 DLL。
 - **从源码编译**：安装 MinGW-w64（g++ 支持 C++17）后，在仓库根目录运行 `build.bat`，脚本会自动编译并启动服务。
 - **技术文档**：[docs/项目技术文档.docx](docs/项目技术文档.docx)（28 页 Word），逐文件说明后端各模块的功能与所用数据结构、算法，并介绍前后端连接方式、前端结构、实现难点与测试记录。
 
@@ -159,12 +159,14 @@ mingw32-make
 或直接调用编译器（Windows 下 g++ 不会自动展开通配符，需逐个列出源文件）：
 
 ```bat
-g++ -std=c++17 -O2 -Wall -Wextra -Isrc ^
+g++ -std=c++17 -O2 -Wall -Wextra -Isrc -static -s ^
     src\common.cpp src\inflate.cpp src\zip.cpp src\docx.cpp src\pdf.cpp ^
     src\text.cpp src\fingerprint.cpp src\similarity.cpp src\analyzer.cpp ^
     src\http_server.cpp src\main.cpp ^
     -o build\pc_check.exe -lws2_32
 ```
+
+> **必须加 `-static`**：MinGW-w64 默认动态链接 `libgcc_s_seh-1.dll`、`libstdc++-6.dll`、`libwinpthread-1.dll`，编译机能运行，但复制到没装 MinGW 的机器会报“找不到 libgcc_s_seh-1.dll”。加上 `-static` 后这些运行库会被打进 exe，复制单个 exe 即可运行；`-s` 只是去掉符号表，让体积更小。`Makefile` 中的 `LDFLAGS ?= -static -s` 与 `build.bat` 已默认启用，无需手动添加。
 
 ### 5.3 启动 Web 服务
 
@@ -310,6 +312,7 @@ python tools\gen_samples.py
 | --- | --- |
 | v0.1.0 | 首个完整版本：DOCX / PDF 解析、查重算法、Web 前后端、8 篇测试语料、README |
 | v0.2.0 | 新增项目技术文档 `docs/项目技术文档.docx`（28 页：模块说明、数据结构与算法、前后端连接、前端结构、难点与测试） |
+| v0.2.1 | 修复预编译包在未安装 MinGW 的机器上无法启动的问题：改用 `-static` 静态链接 libgcc / libstdc++ / winpthread，exe 仅依赖系统 DLL |
 
 ## 十一、许可证
 

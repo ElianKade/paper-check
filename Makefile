@@ -7,6 +7,9 @@
 
 CXX      ?= g++
 CXXFLAGS ?= -std=c++17 -O2 -Wall -Wextra -Isrc
+# -static：把 libgcc / libstdc++ / winpthread 静态链接进 exe，
+# 这样生成的程序不依赖 MinGW 的 DLL，可直接复制到未安装编译器的机器运行。
+LDFLAGS  ?= -static -s
 LDLIBS   ?= -lws2_32
 
 BUILD  := build
@@ -20,9 +23,12 @@ HEADERS := $(wildcard src/*.h)
 
 all: $(TARGET)
 
+$(BUILD):
+	-@if not exist $(BUILD) mkdir $(BUILD)
+
 # 链接主程序：单文件可执行，内置 HTTP 服务与前端静态资源目录
-$(TARGET): $(OBJECTS) $(BUILD)/.gitkeep
-	$(CXX) $(OBJECTS) -o $@ $(LDLIBS)
+$(TARGET): $(OBJECTS) | $(BUILD)
+	$(CXX) $(OBJECTS) -o $@ $(LDFLAGS) $(LDLIBS)
 
 # 逐文件编译，头文件变化时自动重编
 $(BUILD)/%.o: src/%.cpp $(HEADERS)

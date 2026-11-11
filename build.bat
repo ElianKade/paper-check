@@ -26,7 +26,8 @@ set "SOURCES="
 for %%f in (src\*.cpp) do set "SOURCES=!SOURCES! "%%f""
 
 echo [2/3] Compiling ...
-"%CXX%" -std=c++17 -O2 -Wall -Wextra -Isrc !SOURCES! -o build\pc_check.exe -lws2_32
+rem -static links libgcc / libstdc++ into the exe so it runs without MinGW DLLs
+"%CXX%" -std=c++17 -O2 -Wall -Wextra -Isrc -static -s !SOURCES! -o build\pc_check.exe -lws2_32
 if errorlevel 1 (
     echo.
     echo     Build failed. See the messages above.
