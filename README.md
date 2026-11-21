@@ -11,6 +11,7 @@
 - **下载即用**：到 [Releases](https://github.com/ElianKade/paper-check/releases/latest) 下载 `PaperCheck-v0.2.1-win64.zip`，解压后双击 `pc_check.exe`，浏览器访问 <http://127.0.0.1:8080>。压缩包内的 exe 已**静态链接** MinGW 运行库，目标机器无需安装 MinGW、也无需任何第三方 DLL。
 - **从源码编译**：安装 MinGW-w64（g++ 支持 C++17）后，在仓库根目录运行 `build.bat`，脚本会自动编译并启动服务。
 - **技术文档**：[docs/项目技术文档.docx](docs/项目技术文档.docx)（28 页 Word），逐文件说明后端各模块的功能与所用数据结构、算法，并介绍前后端连接方式、前端结构、实现难点与测试记录。
+- **算法文档**：[docs/核心算法原理.docx](docs/核心算法原理.docx)（53 页 Word），按算法名称组织 14 个核心算法，每个算法含原理说明、逐句代码解析表与源码截图。文档目录带超链接，点击可直接跳转到对应算法。
 
 ---
 
@@ -124,7 +125,7 @@
 │  ├─ css/style.css
 │  └─ js/app.js
 ├─ samples/                 8 篇测试文档（DOCX / PDF，覆盖低中高查重率）
-├─ docs/                    界面截图、项目技术文档（Word）
+├─ docs/                    界面截图、项目技术文档、核心算法原理（Word）
 ├─ Makefile                 mingw32-make 构建脚本
 ├─ build.bat                Windows 一键编译并启动
 ├─ LICENSE                  MIT 许可证
@@ -313,6 +314,7 @@ python tools\gen_samples.py
 | v0.1.0 | 首个完整版本：DOCX / PDF 解析、查重算法、Web 前后端、8 篇测试语料、README |
 | v0.2.0 | 新增项目技术文档 `docs/项目技术文档.docx`（28 页：模块说明、数据结构与算法、前后端连接、前端结构、难点与测试） |
 | v0.2.1 | 修复预编译包在未安装 MinGW 的机器上无法启动的问题：改用 `-static` 静态链接 libgcc / libstdc++ / winpthread，exe 仅依赖系统 DLL |
+| v0.3.0 | 新增核心算法文档 `docs/核心算法原理.docx`（53 页：14 个算法、逐句解析、52 张代码截图与示意图、超链接目录） |
 
 ## 十一、许可证
 
